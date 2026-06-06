@@ -27,6 +27,22 @@ app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.get("/", (_req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Hosanna Enterprises API is running",
+    health: "/api/health",
+  });
+});
+
+app.get("/api", (_req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Hosanna Enterprises API is running",
+    health: "/api/health",
+  });
+});
+
 app.get("/api/health", (_req, res) => {
   res.status(200).json({
     success: true,
