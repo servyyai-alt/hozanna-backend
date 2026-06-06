@@ -6,6 +6,29 @@ const { ensureDefaultAdmin } = require("../src/data/seed");
 
 let bootstrapPromise;
 
+const getAllowedOrigins = () =>
+  (process.env.CLIENT_URL || "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+const applyCorsHeaders = (req, res) => {
+  const origin = req.headers.origin;
+  const allowedOrigins = getAllowedOrigins();
+
+  if (!origin) {
+    return;
+  }
+
+  if (!allowedOrigins.length || allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  }
+};
+
 const bootstrap = async () => {
   if (!bootstrapPromise) {
     bootstrapPromise = (async () => {
@@ -21,6 +44,22 @@ const bootstrap = async () => {
 };
 
 module.exports = async (req, res) => {
-  await bootstrap();
-  return app(req, res);
+  applyCorsHeaders(req, res);
+
+  if (req.method === "OPTIONS") {
+    return res.status(204).end();
+  }
+
+  try {
+    await bootstrap();
+    return app(req, res);
+  } catch (error) {
+    console.error("Vercel function bootstrap failed", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Backend bootstrap failed",
+      error: process.env.NODE_ENV === "production" ? undefined : error.message,
+    });
+  }
 };
