@@ -3,19 +3,23 @@ const multer = require("multer");
 const storage = multer.memoryStorage();
 
 const fileFilter = (_req, file, cb) => {
-  if (file.mimetype.startsWith("image/") || file.mimetype === "application/pdf") {
+  if (
+    file.mimetype.startsWith("image/") ||
+    file.mimetype.startsWith("video/") ||
+    file.mimetype === "application/pdf"
+  ) {
     cb(null, true);
     return;
   }
 
-  cb(new Error("Only image and PDF uploads are allowed"));
+  cb(new Error("Only image, video, and PDF uploads are allowed"));
 };
 
 const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024,
+    fileSize: 10 * 1024 * 1024,
   },
 });
 

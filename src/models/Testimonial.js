@@ -8,6 +8,10 @@ const testimonialSchema = new mongoose.Schema(
     rating: { type: Number, required: true, min: 1, max: 5 },
     review: { type: String, required: true, trim: true },
     videoUrl: String,
+    video: {
+      url: String,
+      publicId: String,
+    },
     location: String,
     avatar: {
       url: String,

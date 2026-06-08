@@ -27,8 +27,15 @@ const listTestimonials = asyncHandler(async (req, res) => {
 
 const createTestimonial = asyncHandler(async (req, res) => {
   const payload = { ...req.body };
-  if (req.file) {
-    payload.avatar = await uploadBuffer(req.file, "hozanna/testimonials");
+  const avatarFile = req.files?.avatar?.[0];
+  const videoFile = req.files?.video?.[0];
+
+  if (avatarFile) {
+    payload.avatar = await uploadBuffer(avatarFile, "hozanna/testimonials");
+  }
+
+  if (videoFile) {
+    payload.video = await uploadBuffer(videoFile, "hozanna/testimonials/videos");
   }
 
   const testimonial = await Testimonial.create(payload);
@@ -47,8 +54,15 @@ const updateTestimonial = asyncHandler(async (req, res) => {
   }
 
   Object.assign(testimonial, req.body);
-  if (req.file) {
-    testimonial.avatar = await uploadBuffer(req.file, "hozanna/testimonials");
+  const avatarFile = req.files?.avatar?.[0];
+  const videoFile = req.files?.video?.[0];
+
+  if (avatarFile) {
+    testimonial.avatar = await uploadBuffer(avatarFile, "hozanna/testimonials");
+  }
+
+  if (videoFile) {
+    testimonial.video = await uploadBuffer(videoFile, "hozanna/testimonials/videos");
   }
 
   await testimonial.save();
