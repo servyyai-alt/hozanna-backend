@@ -12,14 +12,19 @@ const careerRoutes = require("./routes/careerRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
+const { isOriginAllowed } = require("./config/cors");
 
 const app = express();
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL
-      ? process.env.CLIENT_URL.split(",").map((value) => value.trim())
-      : true,
+    origin: (origin, callback) => {
+      if (isOriginAllowed(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );

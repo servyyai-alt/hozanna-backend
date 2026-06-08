@@ -2,15 +2,10 @@ require("dotenv").config();
 
 const app = require("../src/app");
 const connectDatabase = require("../src/config/db");
+const { getAllowedOrigins } = require("../src/config/cors");
 const { ensureDefaultAdmin } = require("../src/data/seed");
 
 let bootstrapPromise;
-
-const getAllowedOrigins = () =>
-  (process.env.CLIENT_URL || "")
-    .split(",")
-    .map((value) => value.trim())
-    .filter(Boolean);
 
 const applyCorsHeaders = (req, res) => {
   const origin = req.headers.origin;
