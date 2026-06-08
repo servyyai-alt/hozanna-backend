@@ -21,6 +21,12 @@ const createEnquiry = asyncHandler(async (req, res) => {
     }
   });
 
+  const mobileDigits = String(req.body.mobile || "").replace(/\D/g, "");
+
+  if (mobileDigits.length !== 10) {
+    throw new AppError("Phone number must be exactly 10 digits", 400);
+  }
+
   const allowedBudgetRanges = await getAllowedBudgetRanges();
 
   if (!allowedBudgetRanges.includes(req.body.budgetRange)) {
